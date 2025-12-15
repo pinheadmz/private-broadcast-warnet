@@ -64,4 +64,4 @@ nodes:
 plugins:
   preDeploy:
     tor:
-      entrypoint: "../../../resources/plugins/tor"
+      entrypoint: "../../plugins/tor"
