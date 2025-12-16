@@ -12,24 +12,24 @@ class PrivateSend(Commander):
         parser.description = "Send a private transaction"
         parser.usage = "warnet run /path/to/private_send.py --sender=<tank_index> --to=<tank_index>"
         parser.add_argument(
-            "--sender",
+            "--from",
             dest="sender",
-            type=int,
+            type=str,
             help="The tank to send from",
             required=True
         )
         parser.add_argument(
             "--to",
             dest="to",
-            type=int,
+            type=str,
             help="The tank to send to",
             required=True
         )
 
 
     def run_test(self):
-        sender = self.nodes[self.options.sender]
-        recip = self.nodes[self.options.to]
+        sender = self.tanks[self.options.sender]
+        recip = self.tanks[self.options.to]
         addr = recip.getnewaddress()
         created = sender.createrawtransaction([], [{addr: 0.01}])
         funded = sender.fundrawtransaction(created)
