@@ -25,6 +25,21 @@ class TXFlood(Commander):
             type=int,
             help="Number of seconds between TX generation (default 10 seconds)",
         )
+        parser.add_argument(
+            "--private",
+            dest="private",
+            action="store_true",
+            default=False,
+            help="Use private broadcast for all transactions"
+        )
+        parser.add_argument(
+            "--private-random",
+            dest="private_random",
+            action="store_true",
+            default=False,
+            help="Use private broadcast for randomly selected transactions"
+        )
+
 
     def orders(self, node):
         wallet = self.ensure_miner(node)
@@ -41,8 +56,17 @@ class TXFlood(Commander):
                 for _ in range(num_out):
                     sats = int(float((bal / 20) / num_out) * 1e8)
                     amounts[choice(self.addrs)] = randrange(sats // 4, sats) / 1e8
-                wallet.sendmany(dummy="", amounts=amounts)
-                self.log.info(f"node {node.index} sent tx with {num_out} outputs")
+                maybe = choice([True, False]) if self.options.private_random else False
+                if self.options.private or maybe:
+                    outputs = [{key: value} for key, value in amounts.items()]
+                    created = wallet.createrawtransaction(inputs=[], outputs=outputs)
+                    funded = wallet.fundrawtransaction(created)
+                    signed = wallet.signrawtransactionwithwallet(funded["hex"])
+                    txid = wallet.sendrawtransaction(signed["hex"])
+                    self.log.info(f"Private Broadcast:  node {node.index} sent tx with {num_out} outputs: {txid}")
+                else:
+                    txid = wallet.sendmany(dummy="", amounts=amounts)
+                    self.log.info(f"Standard Broadcast: node {node.index} sent tx with {num_out} outputs: {txid}")
             except Exception as e:
                 self.log.error(f"node {node.index} error: {e}")
 

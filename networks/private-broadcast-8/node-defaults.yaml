@@ -3,13 +3,18 @@ image:
   repository: bitcoindevproject/bitcoin
   pullPolicy: IfNotPresent
 defaultConfig: |
-  debug=net
   debug=tor
   debug=privatebroadcast
   listen=1
   onion=127.0.0.1:9050
   torcontrol=127.0.0.1:9051
   privatebroadcast=1
+  rpcauth=forkobserver:1418183465eecbd407010cf60811c6a0$d4e5f0647a63429c218da1302d7f19fe627302aeb0a71a74de55346a25d8057c
+
+collectLogs: true
+metricsExport: true
+metricsScrapeInterval: 5s
+metrics: blocks=getblockcount() mempool_size=getmempoolinfo()["size"] memused=getmemoryinfo()["locked"]["used"] onionpeers=COUNT:getpeerinfo(),network,onion ipv4peers=COUNT:getpeerinfo(),network,ipv4
 
 extraContainers:
   - name: tor
@@ -19,5 +24,3 @@ extraContainers:
         containerPort: 9001
         protocol: TCP
 
-collectLogs: false
-metricsExport: false
