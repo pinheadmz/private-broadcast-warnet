@@ -25,13 +25,21 @@ class PrivateSend(Commander):
             help="The tank to send to",
             required=True
         )
+        parser.add_argument(
+            "--amt",
+            dest="amt",
+            type=float,
+            help="The amount in BTC to send (default: 0.01)",
+            default=0.01,
+            required=False
+        )
 
 
     def run_test(self):
         sender = self.tanks[self.options.sender]
         recip = self.tanks[self.options.to]
         addr = recip.getnewaddress()
-        created = sender.createrawtransaction([], [{addr: 0.01}])
+        created = sender.createrawtransaction([], [{addr: self.options.amt}])
         funded = sender.fundrawtransaction(created)
         signed = sender.signrawtransactionwithwallet(funded["hex"])
         txid = sender.sendrawtransaction(signed["hex"])

@@ -18,7 +18,6 @@ class OnionAddrGossip(Commander):
         onions = []
 
         def get_onion(self, node):
-            self.log.info(f"Getting local onion address from {node.tank}...")
             while True:
                 info = node.getnetworkinfo()
                 for addr in info["localaddresses"]:
@@ -26,7 +25,7 @@ class OnionAddrGossip(Commander):
                         onions.append(addr["address"])
                         self.log.info(f"{node.tank}: {addr['address']}")
                         return
-                self.log.info(f"No onion address for {node.tank}, wait and retry...")
+                self.log.info(f"{node.tank}: No onion address, wait and retry...")
                 sleep(5)
         addr_threads = [
             threading.Thread(target=get_onion, args=(self, node)) for node in self.nodes
