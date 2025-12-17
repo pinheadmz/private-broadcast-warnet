@@ -14,7 +14,7 @@ defaultConfig: |
 collectLogs: true
 metricsExport: true
 metricsScrapeInterval: 5s
-metrics: blocks=getblockcount() mempool_size=getmempoolinfo()["size"] memused=getmemoryinfo()["locked"]["used"] onionpeers=COUNT:getpeerinfo(),network,onion ipv4peers=COUNT:getpeerinfo(),network,ipv4
+metrics: blocks=getblockcount() mempool_size=getmempoolinfo()["size"] memused=getmemoryinfo()["locked"]["used"] privatepeers=COUNT:getpeerinfo(),connection_type,private-broadcast ipv4peers=COUNT:getpeerinfo(),network,ipv4
 
 extraContainers:
   - name: tor
